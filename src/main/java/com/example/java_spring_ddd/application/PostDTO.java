@@ -1,7 +1,9 @@
 package com.example.java_spring_ddd.application;
 
+import java.util.UUID;
+
 public record PostDTO(
-        String id,
+        UUID id,
         String title,
         String content,
         UserDTO user,

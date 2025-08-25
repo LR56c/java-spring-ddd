@@ -1,45 +1,41 @@
 package com.example.java_spring_ddd.application;
 
 
-import com.example.java_spring_ddd.domain.User;
-import com.example.java_spring_ddd.infrastructure.UserEntity;
-import com.example.java_spring_ddd.infrastructure.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-
     private final CreateUser createUser;
+    private final DeleteUser deleteUser;
+    private final UpdateUser updateUser;
+    private final SearchUser searchUser;
+
 
     @Autowired
-    public UserService(UserRepository userRepository, CreateUser createUser) {
-        this.userRepository = userRepository;
+    public UserService(CreateUser createUser, DeleteUser deleteUser, UpdateUser updateUser, SearchUser searchUser) {
         this.createUser = createUser;
+        this.deleteUser = deleteUser;
+        this.updateUser = updateUser;
+        this.searchUser = searchUser;
     }
 
     public UserDTO save(UserDTO user) {
         return createUser.execute(user);
     }
 
-    public void delete(UserEntity user) {
-        userRepository.delete(user);
+    public void delete(String id) {
+        deleteUser.execute(id);
     }
 
-    public Iterable<UserEntity> findAll() {
-        return userRepository.findAll();
-//        var entities = postRepositoryData.findAll();
-//        return StreamSupport.stream(entities.spliterator(), false)
-//                .map(UserUserEntityDataMapper::toDomain)
-//                .toList();
+    public List<UserDTO> findAll() {
+        return searchUser.execute();
     }
 
-    public Optional<UserEntity> findById(String id) {
-        return userRepository.findById(id);
+    public UserDTO update(UserDTO user) {
+        return updateUser.execute(user);
     }
 }

@@ -3,6 +3,8 @@ package com.example.java_spring_ddd.infrastructure;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
-public interface PostRepository extends CrudRepository<PostEntity, String> {
+public interface PostRepository extends CrudRepository<PostEntity, UUID> {
 }
