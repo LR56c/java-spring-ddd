@@ -1,10 +1,12 @@
 package com.example.java_spring_ddd.application;
 
 import com.example.java_spring_ddd.infrastructure.UserRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
+import java.util.Map;
 
 @Component
 public class SearchUser {
@@ -14,10 +16,9 @@ public class SearchUser {
         this.repo = repo;
     }
 
-    public List<UserDTO> execute() {
-        var users = StreamSupport
-                .stream(repo.findAll().spliterator(), false)
-                .toList();
+    public List<UserDTO> execute(
+            @RequestParam Map<String, String> query, Pageable pageable) {
+        var users = repo.search(query, pageable);
         return users.stream()
                 .map(user -> new UserDTO(
                         user.getId(),

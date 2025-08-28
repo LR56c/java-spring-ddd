@@ -1,10 +1,7 @@
 package com.example.java_spring_ddd.domain;
 
 import com.example.java_spring_ddd.shared.Email;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
