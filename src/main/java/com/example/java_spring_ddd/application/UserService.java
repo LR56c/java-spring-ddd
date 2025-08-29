@@ -1,9 +1,7 @@
 package com.example.java_spring_ddd.application;
 
 
-import com.example.java_spring_ddd.infrastructure.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +34,7 @@ public class UserService {
         deleteUser.execute(id);
     }
 
-    public Page<UserDTO> findAll(@RequestParam Map<String, String> query, Pageable pageable) {
+    public List<UserDTO> findAll(@RequestParam Map<String, String> query, Pageable pageable) {
         return searchUser.execute(query, pageable);
     }
 

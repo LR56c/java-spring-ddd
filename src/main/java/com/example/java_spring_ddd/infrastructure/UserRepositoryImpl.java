@@ -25,27 +25,12 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public Page<UserEntity> search(Map<String, String> query, Pageable pageable) {
+        System.out.println("Search called with query: " + query + " and pageable: " + pageable);
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<UserEntity> dataQuery = cb.createQuery(UserEntity.class);
-        Root<UserEntity> dataRoot = dataQuery.from(UserEntity.class);
-        List<Predicate> dataPredicates = buildPredicates(query, dataRoot, cb);
-        dataQuery.where(dataPredicates.toArray(new Predicate[0]));
-        dataQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), dataRoot, cb));
-        TypedQuery<UserEntity> typedQuery = entityManager.createQuery(dataQuery);
-        typedQuery.setFirstResult((int) pageable.getOffset());
-        typedQuery.setMaxResults(pageable.getPageSize());
-        List<UserEntity> resultList = typedQuery.getResultList();
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<UserEntity> countRoot = countQuery.from(UserEntity.class);
-        List<Predicate> countPredicates = buildPredicates(query, countRoot, cb);
-        countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[0]));
-        Long total = entityManager.createQuery(countQuery).getSingleResult();
-        return new PageImpl<>(resultList, pageable, total);
-    }
+        CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+        Root<UserEntity> root = cq.from(UserEntity.class);
 
-    private List<Predicate> buildPredicates(Map<String, String> query, Root<UserEntity> root, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-
         if (query.containsKey("id")) {
             try {
                 UUID id = UUID.fromString(query.get("id"));
@@ -54,6 +39,23 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 System.out.println("Invalid UUID format for id: " + query.get("id"));
             }
         }
-        return predicates;
+
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        cq.orderBy(QueryUtils.toOrders(pageable.getSort(), root, cb));
+
+        TypedQuery<UserEntity> queryApplied = entityManager.createQuery(cq);
+
+        queryApplied.setFirstResult((int) pageable.getOffset());
+        queryApplied.setMaxResults(pageable.getPageSize());
+
+        List<UserEntity> resultList = queryApplied.getResultList();
+
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<UserEntity> countRoot = countQuery.from(UserEntity.class);
+        countQuery.select(cb.count(countRoot)).where(predicates.toArray(new Predicate[0]));
+        Long total = entityManager.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(resultList, pageable, total);
     }
 }
