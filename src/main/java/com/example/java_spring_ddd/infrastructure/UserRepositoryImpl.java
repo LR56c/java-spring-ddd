@@ -32,12 +32,8 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
         List<Predicate> predicates = new ArrayList<>();
         if (query.containsKey("id")) {
-            try {
-                UUID id = UUID.fromString(query.get("id"));
-                predicates.add(cb.equal(root.get("id"), id));
-            } catch (IllegalArgumentException e) {
-                System.out.println("Invalid UUID format for id: " + query.get("id"));
-            }
+            UUID id = UUID.fromString(query.get("id"));
+            predicates.add(cb.equal(root.get("id"), id));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
